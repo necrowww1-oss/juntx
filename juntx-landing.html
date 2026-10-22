@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="es-AR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Juntx | Convertí visitas en clientes que vuelven</title>
+<meta name="description" content="Fidelización NFC para locales: base de datos propia, cumpleaños automáticos por WhatsApp y reseñas de Google.">
+<meta name="theme-color" content="#14321F">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --g9:#0F2619; --g7:#1F5A3E; --g5:#2F7A52; --y:#F3D34A; --y2:#FFE98A; --y-soft:#FBF4CF;
+  --paper:#FAFAF5; --ink:#0F2619; --muted:#5A6B5F; --line:#E2E7DC;
+  --grad:linear-gradient(135deg,#1F5A3E 0%,#2F7A52 45%,#F3D34A 100%);
+  --ease:cubic-bezier(.2,.7,.2,1);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:"Plus Jakarta Sans",system-ui,sans-serif;color:var(--ink);background:var(--paper);line-height:1.6;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+a{color:inherit;text-decoration:none}
+.wrap{max-width:1120px;margin:0 auto;padding:0 24px}
+h1,h2,h3{line-height:1.08;letter-spacing:-.025em;font-weight:800}
+h1{font-size:clamp(2.8rem,7vw,5.6rem)}
+h2{font-size:clamp(2rem,4.6vw,3.4rem)}
+h3{font-size:1.25rem;letter-spacing:-.01em}
+p{color:var(--muted)}
+section{padding:112px 0;position:relative}
+.gradient-text{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:54px;padding:0 28px;border-radius:999px;font:700 1rem "Plus Jakarta Sans",sans-serif;cursor:pointer;transition:transform .3s var(--ease),box-shadow .3s var(--ease),background .3s}
+.btn:hover{transform:translateY(-2px)}
+.btn:focus-visible,a:focus-visible{outline:3px solid var(--y);outline-offset:3px}
+.btn-primary{background:var(--g9);color:#fff;box-shadow:0 12px 30px -12px rgba(15,38,25,.6)}
+.btn-primary:hover{box-shadow:0 18px 40px -12px rgba(15,38,25,.7)}
+.btn-yellow{background:var(--y);color:var(--g9);box-shadow:0 12px 30px -10px rgba(243,211,74,.8)}
+.btn-yellow:hover{background:var(--y2)}
+.btn-ghost{background:transparent;color:var(--g9);box-shadow:inset 0 0 0 1.5px var(--g9)}
+.btn-ghost:hover{background:var(--g9);color:#fff}
+
+/* NAV */
+nav{position:sticky;top:0;z-index:30;background:rgba(250,250,245,.82);backdrop-filter:blur(14px);border-bottom:1px solid transparent;transition:border-color .3s}
+nav.scrolled{border-color:var(--line)}
+.nav{display:flex;justify-content:space-between;align-items:center;height:76px}
+.logo{font-weight:800;font-size:1.5rem;letter-spacing:-.04em}
+.logo b{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+.nav-links{display:flex;gap:30px;font-size:.92rem;font-weight:600;color:var(--muted)}
+.nav-links a{transition:color .2s}
+.nav-links a:hover{color:var(--ink)}
+@media(max-width:820px){.nav-links{display:none}}
+
+/* HERO */
+.hero{padding:70px 0 90px;overflow:hidden}
+.blob{position:absolute;border-radius:50%;filter:blur(70px);opacity:.55;pointer-events:none;z-index:0;animation:drift 14s ease-in-out infinite alternate}
+.blob.a{width:460px;height:460px;background:#F3D34A;top:-120px;right:-80px}
+.blob.b{width:380px;height:380px;background:#2F7A52;bottom:-140px;left:-120px;animation-delay:-6s}
+@keyframes drift{to{transform:translate(40px,30px) scale(1.08)}}
+.hero-grid{position:relative;z-index:1;display:grid;grid-template-columns:1.1fr .9fr;gap:70px;align-items:center}
+.hero h1{margin-bottom:26px}
+.rise{opacity:0;transform:translateY(22px);animation:rise .9s var(--ease) forwards}
+.d1{animation-delay:.1s}.d2{animation-delay:.25s}.d3{animation-delay:.4s}.d4{animation-delay:.55s}
+@keyframes rise{to{opacity:1;transform:none}}
+.hero .sub{font-size:1.18rem;max-width:520px;margin-bottom:38px}
+.cta-row{display:flex;flex-wrap:wrap;gap:14px}
+.meta{display:flex;flex-wrap:wrap;gap:8px 20px;margin-top:30px;font-size:.9rem;font-weight:600;color:var(--muted)}
+.meta span::before{content:"✓ ";color:var(--g5)}
+
+/* NFC CARD */
+.nfc-wrap{position:relative;display:flex;justify-content:center}
+.nfc{position:relative;width:min(400px,100%);border-radius:30px;padding:2px;background:var(--grad);background-size:200% 200%;animation:shift 6s linear infinite;box-shadow:0 40px 80px -30px rgba(15,38,25,.55)}
+@keyframes shift{to{background-position:200% 50%}}
+.nfc-in{background:var(--g9);color:#fff;border-radius:28px;padding:30px 28px 26px;position:relative;overflow:hidden}
+.nfc-in::after{content:"";position:absolute;top:-40%;left:-60%;width:40%;height:180%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.14),transparent);transform:rotate(18deg);animation:sheen 4.5s ease-in-out infinite}
+@keyframes sheen{0%,60%{left:-60%}100%{left:130%}}
+.nfc-top{display:flex;justify-content:space-between;align-items:center;font-size:.8rem;font-weight:700;letter-spacing:.02em;opacity:.9}
+.chip{width:14px;height:14px;border-radius:999px;background:var(--y);box-shadow:0 0 0 4px rgba(243,211,74,.2)}
+.tap{position:relative;margin:26px auto 24px;width:120px;height:120px;display:grid;place-items:center}
+.tap i{position:absolute;inset:0;border-radius:50%;border:2px solid var(--y);animation:ping 2.4s var(--ease) infinite}
+.tap i:nth-child(2){animation-delay:.8s}.tap i:nth-child(3){animation-delay:1.6s}
+@keyframes ping{0%{transform:scale(.45);opacity:.9}100%{transform:scale(1.25);opacity:0}}
+.tap b{position:relative;width:66px;height:66px;border-radius:50%;background:var(--grad);display:grid;place-items:center;font-size:1.6rem}
+.nfc-title{text-align:center;font-weight:800;font-size:1.2rem}
+.nfc-sub{text-align:center;font-size:.86rem;color:#B9CCBF;margin-top:4px}
+.stamps{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin:26px 0 22px}
+.s{aspect-ratio:1;border-radius:50%;box-shadow:inset 0 0 0 1.5px rgba(255,255,255,.25);display:grid;place-items:center;font-size:.9rem;color:transparent}
+.s.on{background:var(--y);box-shadow:none;color:var(--g9);animation:pop .5s var(--ease) forwards;animation-delay:calc(var(--i)*.14s + .9s);transform:scale(.4)}
+.s.gift{box-shadow:inset 0 0 0 1.5px var(--y);color:var(--y)}
+@keyframes pop{to{transform:scale(1)}}
+.nfc-foot{display:flex;justify-content:space-between;font-size:.82rem;font-weight:700;border-top:1px solid rgba(255,255,255,.14);padding-top:16px}
+.nfc-foot em{font-style:normal;color:var(--y)}
+.float{position:absolute;background:#fff;color:var(--ink);border-radius:18px;padding:12px 16px;font-size:.84rem;font-weight:700;box-shadow:0 24px 50px -20px rgba(15,38,25,.45);animation:float 5s ease-in-out infinite}
+.float.f1{left:-30px;bottom:60px}
+.float.f2{right:-24px;top:40px;animation-delay:-2.5s}
+.float small{display:block;font-weight:500;color:var(--muted);font-size:.76rem}
+@keyframes float{50%{transform:translateY(-12px)}}
+@media(max-width:900px){.hero-grid{grid-template-columns:1fr;gap:60px}.float{display:none}}
+
+/* TICKER */
+.ticker{background:var(--g9);color:#fff;padding:20px 0;overflow:hidden;white-space:nowrap}
+.ticker-track{display:inline-flex;gap:48px;animation:tick 28s linear infinite;font-weight:700;font-size:1.1rem}
+.ticker-track span::after{content:"✦";margin-left:48px;color:var(--y)}
+@keyframes tick{to{transform:translateX(-50%)}}
+
+/* PROBLEM */
+.problem-head{max-width:760px;margin-bottom:64px}
+.problem-head p{font-size:1.15rem;margin-top:20px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
+.card{background:#fff;border-radius:26px;padding:36px 32px;border:1px solid var(--line);transition:transform .4s var(--ease),box-shadow .4s var(--ease)}
+.card:hover{transform:translateY(-6px);box-shadow:0 30px 60px -30px rgba(15,38,25,.35)}
+.card .ic{width:52px;height:52px;border-radius:16px;display:grid;place-items:center;font-size:1.4rem;margin-bottom:22px;background:var(--y-soft)}
+.card p{margin-top:10px;font-size:.98rem}
+@media(max-width:900px){.grid3{grid-template-columns:1fr}}
+
+/* HOW */
+.how{background:var(--y-soft)}
+.how-head{text-align:center;margin:0 auto 70px;max-width:700px}
+.how-head p{margin-top:18px;font-size:1.1rem}
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;position:relative}
+.step{background:#fff;border-radius:26px;padding:40px 34px;position:relative;z-index:1}
+.step .n{font-size:3.4rem;font-weight:800;background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;line-height:1;margin-bottom:22px}
+.step p{margin-top:10px}
+.bar-line{position:absolute;left:12%;right:12%;top:50%;height:3px;background:var(--grad);border-radius:3px;transform-origin:left;transform:scaleX(0);transition:transform 1.6s var(--ease) .3s}
+.how.in .bar-line{transform:scaleX(1)}
+@media(max-width:900px){.steps{grid-template-columns:1fr}.bar-line{display:none}}
+
+/* OWNER */
+.owner-head{display:flex;justify-content:space-between;align-items:end;gap:40px;margin-bottom:56px;flex-wrap:wrap}
+.owner-head p{max-width:440px}
+.powers{display:grid;grid-template-columns:1fr 1fr;gap:22px}
+.power{background:var(--g9);color:#fff;border-radius:30px;padding:40px;position:relative;overflow:hidden;min-height:300px;display:flex;flex-direction:column}
+.power::before{content:"";position:absolute;width:260px;height:260px;border-radius:50%;background:var(--grad);opacity:.22;right:-90px;top:-90px;transition:transform .8s var(--ease)}
+.power:hover::before{transform:scale(1.25)}
+.power h3{font-size:1.5rem;margin-bottom:12px;position:relative}
+.power p{color:#B9CCBF;position:relative}
+.bubble{margin-top:auto;padding-top:26px;position:relative}
+.msg{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);border-radius:18px 18px 18px 4px;padding:14px 16px;font-size:.9rem;color:#E8F0EA}
+.msg b{display:block;font-size:.72rem;color:var(--y);letter-spacing:.04em;margin-bottom:4px}
+.count{display:flex;align-items:baseline;gap:10px;font-size:3rem;font-weight:800;letter-spacing:-.04em;margin-top:auto;position:relative}
+.count small{font-size:.9rem;font-weight:600;color:#B9CCBF;letter-spacing:0}
+.plus{margin-top:auto;position:relative;display:inline-flex;align-self:flex-start;padding:14px 22px;border-radius:999px;background:var(--y);color:var(--g9);font-weight:800;animation:pulse 2.4s ease-in-out infinite}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(243,211,74,.55)}50%{box-shadow:0 0 0 14px rgba(243,211,74,0)}}
+.tags{display:flex;flex-wrap:wrap;gap:8px;margin-top:auto;position:relative}
+.tags span{background:rgba(255,255,255,.1);border-radius:999px;padding:7px 14px;font-size:.84rem;font-weight:600}
+@media(max-width:900px){.powers{grid-template-columns:1fr}.power{min-height:0}}
+
+/* REVIEWS */
+.reviews{background:var(--grad);color:#fff;overflow:hidden}
+.rev-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:70px;align-items:center}
+.reviews h2{color:#fff}
+.reviews p{color:#E9F3EC;font-size:1.12rem;margin-top:20px;max-width:480px}
+.rev-stack{position:relative;height:300px}
+.rev{position:absolute;background:#fff;color:var(--ink);border-radius:24px;padding:26px 28px;max-width:330px;box-shadow:0 30px 60px -28px rgba(0,0,0,.4);animation:float 6s ease-in-out infinite}
+.rev.r1{top:0;left:0}
+.rev.r2{top:150px;right:0;animation-delay:-3s}
+.stars{color:#E0A800;letter-spacing:3px;font-size:1rem}
+.rev p{color:var(--ink);font-size:1rem;margin-top:10px;font-weight:600}
+.rev small{display:block;color:var(--muted);font-size:.8rem;margin-top:10px}
+@media(max-width:900px){.rev-grid{grid-template-columns:1fr;gap:50px}.rev-stack{height:340px}}
+
+/* PRICE */
+.price-wrap{display:grid;grid-template-columns:.9fr 1.1fr;gap:70px;align-items:center}
+.price-wrap h2{margin-bottom:20px}
+.price-wrap>div>p{font-size:1.1rem}
+.price-card{background:#fff;border-radius:34px;padding:50px 46px;border:1px solid var(--line);box-shadow:0 40px 80px -40px rgba(15,38,25,.35);position:relative}
+.price-card .pill{position:absolute;top:-16px;right:36px;background:var(--grad);color:#fff;font-size:.8rem;font-weight:800;padding:8px 16px;border-radius:999px}
+.price-card h3{font-size:1.4rem}
+.amount{display:flex;align-items:baseline;gap:10px;margin:20px 0 26px;padding-bottom:26px;border-bottom:1px solid var(--line)}
+.amount strong{font-size:3.6rem;font-weight:800;letter-spacing:-.04em;background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+.amount span{color:var(--muted);font-weight:600}
+.price-card ul{list-style:none;display:grid;gap:14px;margin-bottom:34px}
+.price-card li{display:flex;gap:12px;align-items:center;font-weight:600;font-size:.98rem}
+.price-card li::before{content:"";width:22px;height:22px;flex:none;border-radius:50%;background:var(--grad) center/12px no-repeat;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3'%3E%3Cpath d='M5 12l5 5 9-10'/%3E%3C/svg%3E")}
+.price-card .btn{width:100%}
+.price-card small{display:block;text-align:center;color:var(--muted);margin-top:16px;font-size:.84rem}
+@media(max-width:900px){.price-wrap{grid-template-columns:1fr;gap:50px}}
+
+/* FINAL */
+.final{text-align:center;padding:40px 0 120px}
+.final-box{background:var(--g9);border-radius:40px;padding:90px 40px;position:relative;overflow:hidden}
+.final-box::before{content:"";position:absolute;inset:-2px;background:var(--grad);opacity:.25;animation:shift 8s linear infinite;background-size:200% 200%}
+.final-box>*{position:relative}
+.final h2{color:#fff;max-width:720px;margin:0 auto 22px}
+.final p{color:#B9CCBF;font-size:1.1rem;margin-bottom:38px}
+
+footer{padding:36px 0 50px;border-top:1px solid var(--line);font-size:.9rem;color:var(--muted)}
+.foot{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px}
+
+/* REVEAL */
+.reveal{opacity:0;transform:translateY(28px);transition:opacity .9s var(--ease),transform .9s var(--ease)}
+.reveal.in{opacity:1;transform:none}
+
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}
+  .rise,.reveal{opacity:1;transform:none}
+  .s.on{transform:scale(1)}
+  .bar-line{transform:scaleX(1)}
+}
+</style>
+</head>
+<body>
+
+<nav id="nav">
+  <div class="wrap nav">
+    <a href="#top" class="logo">JUNT<b>X</b></a>
+    <div class="nav-links">
+      <a href="#problema">El problema</a>
+      <a href="#como">Cómo funciona</a>
+      <a href="#dueno">Beneficios</a>
+      <a href="#precio">Precio</a>
+    </div>
+    <a href="#precio" class="btn btn-primary" style="height:46px;padding:0 22px;font-size:.92rem">Sumar mi local</a>
+  </div>
+</nav>
+
+<header class="hero" id="top">
+  <div class="blob a"></div>
+  <div class="blob b"></div>
+  <div class="wrap hero-grid">
+    <div>
+      <h1 class="rise d1">Convertí visitas en <span class="gradient-text">clientes que vuelven.</span></h1>
+      <p class="sub rise d2">Fidelización NFC para locales: una base de datos propia, cumpleaños automáticos por WhatsApp y reseñas de Google para que te elijan más.</p>
+      <div class="cta-row rise d3">
+        <a href="#precio" class="btn btn-primary">Probar la demo →</a>
+        <a href="#como" class="btn btn-ghost">Ver cómo funciona</a>
+      </div>
+      <div class="meta rise d4">
+        <span>Sin descargar apps</span>
+        <span>Setup en 24 hs</span>
+        <span>Sin permanencia</span>
+      </div>
+    </div>
+
+    <div class="nfc-wrap rise d3">
+      <div class="float f1"><small>Cumpleaños de hoy</small>Julieta · torta de regalo 🎂</div>
+      <div class="float f2"><small>Registro del cliente</small>5 segundos ⚡</div>
+      <div class="nfc">
+        <div class="nfc-in">
+          <div class="nfc-top"><span>JUNTX · Café del Centro</span><span class="chip"></span></div>
+          <div class="tap"><i></i><i></i><i></i><b>📶</b></div>
+          <div class="nfc-title">Apoyá tu celular acá</div>
+          <div class="nfc-sub">Se abre el club del local, sin descargar nada</div>
+          <div class="stamps" id="stamps"></div>
+          <div class="nfc-foot"><span>Próximo premio: café gratis</span><em>7 / 10</em></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<div class="ticker" aria-hidden="true">
+  <div class="ticker-track">
+    <span>Base de datos propia</span><span>Cumpleaños automáticos</span><span>Campañas por WhatsApp</span><span>Reseñas de Google</span><span>Sin apps para descargar</span><span>Base de datos propia</span><span>Cumpleaños automáticos</span><span>Campañas por WhatsApp</span><span>Reseñas de Google</span><span>Sin apps para descargar</span>
+  </div>
+</div>
+
+<section id="problema">
+  <div class="wrap">
+    <div class="problem-head reveal">
+      <h2>¿Tu local depende de que Instagram tenga ganas de mostrarte?</h2>
+      <p>Regalarle tu base de clientes al algoritmo es un riesgo que no hace falta correr.</p>
+    </div>
+    <div class="grid3">
+      <div class="card reveal">
+        <div class="ic">📉</div>
+        <h3>El algoritmo te ignora</h3>
+        <p>Pagás pauta y la gente pasa de largo entre miles de estímulos por día.</p>
+      </div>
+      <div class="card reveal">
+        <div class="ic">🗂️</div>
+        <h3>Los puntos se pierden</h3>
+        <p>Las tarjetas de cartón quedan en la cartera y las apps frustran en la caja.</p>
+      </div>
+      <div class="card reveal">
+        <div class="ic">🫥</div>
+        <h3>Cero datos reales</h3>
+        <p>No sabés quién viene todos los martes, cuándo cumple años ni cómo volver a contactarlo.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="how" id="como">
+  <div class="wrap">
+    <div class="how-head reveal">
+      <h2>Tan simple como apoyar el celular.</h2>
+      <p>Tu cliente se registra en 5 segundos mientras espera ser atendido.</p>
+    </div>
+    <div class="steps">
+      <div class="bar-line"></div>
+      <div class="step reveal">
+        <div class="n">01</div>
+        <h3>Apoyá y listo</h3>
+        <p>Apoya el celular en la tarjeta NFC del mostrador. Se abre el club de tu local en el navegador.</p>
+      </div>
+      <div class="step reveal">
+        <div class="n">02</div>
+        <h3>Registro en 5 segundos</h3>
+        <p>Nombre, WhatsApp y fecha de cumpleaños. El perfil digital se crea al instante.</p>
+      </div>
+      <div class="step reveal">
+        <div class="n">03</div>
+        <h3>Suma y canjea</h3>
+        <p>Cada vez que vuelve, el empleado suma un punto con un toque y las recompensas corren solas.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="dueno">
+  <div class="wrap">
+    <div class="owner-head reveal">
+      <h2>No es un programa de puntos.<br>Es tu máquina de fidelizar.</h2>
+      <p>Cuatro herramientas directas para que el dueño venda más sin complicarse.</p>
+    </div>
+    <div class="powers">
+      <div class="power reveal">
+        <h3>Cumpleaños con regalo</h3>
+        <p>El día del cumple llega un WhatsApp automático. Nadie va solo a buscar el regalo, así que la visita está asegurada.</p>
+        <div class="bubble">
+          <div class="msg"><b>WHATSAPP AUTOMÁTICO</b>¡Hola Julieta! Te deseamos un feliz cumple. Vení hoy a buscar tu porción de torta 🍰</div>
+        </div>
+      </div>
+      <div class="power reveal">
+        <h3>Campañas por WhatsApp</h3>
+        <p>Avisá un 2x1, un menú nuevo o un evento directo al celular de tus clientes, sin depender del algoritmo.</p>
+        <div class="tags"><span>2x1 de hoy</span><span>Nueva colección</span><span>Evento del fin de semana</span></div>
+      </div>
+      <div class="power reveal">
+        <h3>Caja en un toque</h3>
+        <p>El empleado escribe el número o escanea el QR y aprieta un solo botón. Cero demoras en la fila.</p>
+        <div class="plus">+1 punto</div>
+      </div>
+      <div class="power reveal">
+        <h3>Base de datos propia</h3>
+        <p>Todos tus clientes en un panel: filtrá por cumpleañeros del mes o exportá los contactos para tus campañas.</p>
+        <div class="count"><span id="counter">0</span><small>clientes en tu base</small></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="reviews">
+  <div class="wrap rev-grid">
+    <div class="reveal">
+      <h2>Más reseñas en Google, más gente que te elige.</h2>
+      <p>Tarjetas de reseñas incluidas. Tus clientes te califican en segundos y vos subís en el mapa.</p>
+    </div>
+    <div class="rev-stack reveal">
+      <div class="rev r1">
+        <div class="stars">★★★★★</div>
+        <p>Buen café y te dan puntos. Vuelvo cada semana.</p>
+        <small>Cliente · Google</small>
+      </div>
+      <div class="rev r2">
+        <div class="stars">★★★★★</div>
+        <p>Me registré en el momento y ya me llegó mi regalo de cumple.</p>
+        <small>Cliente · Google</small>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="precio">
+  <div class="wrap price-wrap">
+    <div class="reveal">
+      <h2>Simple, predecible y sin comisiones por venta.</h2>
+      <p>Un precio único que se paga solo cuando un par de clientes vuelven por su cumple.</p>
+    </div>
+    <div class="price-card reveal">
+      <span class="pill">Todo incluido</span>
+      <h3>Juntx Local Pro</h3>
+      <div class="amount"><strong>$20.000</strong><span>ARS / mes</span></div>
+      <ul>
+        <li>Tarjeta NFC física para el mostrador</li>
+        <li>Base de datos de clientes ilimitada</li>
+        <li>Cumpleaños automáticos por WhatsApp</li>
+        <li>Campañas por WhatsApp</li>
+        <li>Caja rápida para empleados</li>
+        <li>Panel de administración con filtros</li>
+        <li>Tarjetas de reseñas de Google</li>
+        <li>Soporte prioritario por WhatsApp</li>
+      </ul>
+      <a href="https://wa.me/?text=Hola!%20Quiero%20sumar%20Juntx%20a%20mi%20local" target="_blank" rel="noopener" class="btn btn-yellow">Sumar mi local ahora</a>
+      <small>Sin contratos de permanencia. Cancelá cuando quieras.</small>
+    </div>
+  </div>
+</section>
+
+<section class="final">
+  <div class="wrap">
+    <div class="final-box reveal">
+      <h2>Tus clientes ya tienen con qué volver.</h2>
+      <p>Te configuramos el local en 24 hs. Escribinos y arrancamos.</p>
+      <a href="https://wa.me/?text=Hola!%20Quiero%20consultar%20sobre%20Juntx" target="_blank" rel="noopener" class="btn btn-yellow">Hablar por WhatsApp</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap foot">
+    <div class="logo">JUNT<b>X</b></div>
+    <div>© 2026 Juntx. Todos los derechos reservados.</div>
+  </div>
+</footer>
+
+<script>
+  // Sellos de la tarjeta del hero: 10 lugares, el último es el premio
+  const stamps = document.getElementById("stamps");
+  for (let i = 0; i < 10; i++) {
+    const s = document.createElement("div");
+    s.className = "s" + (i < 7 ? " on" : "") + (i === 9 ? " gift" : "");
+    s.style.setProperty("--i", i);
+    s.textContent = i === 9 ? "★" : "";
+    stamps.appendChild(s);
+  }
+
+  // Scroll: sombra del nav, revelado de bloques y línea de pasos
+  const nav = document.getElementById("nav");
+  addEventListener("scroll", () => nav.classList.toggle("scrolled", scrollY > 10), { passive: true });
+
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach((e) => {
+      if (e.isIntersecting) {
+        e.target.classList.add("in");
+        if (e.target.classList.contains("count")) countUp();
+        io.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.15 });
+  document.querySelectorAll(".reveal, .how").forEach((el) => io.observe(el));
+
+  // Contador de la base de datos (cifra ilustrativa)
+  let counted = false;
+  function countUp() {
+    if (counted) return;
+    counted = true;
+    const el = document.getElementById("counter");
+    const target = 1248, start = performance.now(), dur = 1800;
+    (function step(now) {
+      const p = Math.min((now - start) / dur, 1);
+      el.textContent = Math.round(target * (1 - Math.pow(1 - p, 3))).toLocaleString("es-AR");
+      if (p < 1) requestAnimationFrame(step);
+    })(start);
+  }
+  const counterWrap = document.querySelector(".count");
+  new IntersectionObserver((entries, o) => {
+    if (entries[0].isIntersecting) { countUp(); o.disconnect(); }
+  }, { threshold: 0.6 }).observe(counterWrap);
+</script>
+</body>
+</html>
